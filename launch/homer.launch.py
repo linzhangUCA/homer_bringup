@@ -77,7 +77,7 @@ def generate_launch_description():
             str(get_package_share_path("teleop_twist_joy") / "launch/teleop-launch.py")
         ),
         launch_arguments={
-            "joy_config": "ps3",
+            # "joy_config": "ps3",
             "config_filepath": str(joy_config_path),
         }.items(),
     )
