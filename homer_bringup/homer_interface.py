@@ -15,7 +15,7 @@ class HomerInterface(Node):
     def __init__(self):
         super().__init__("homer_interface")
         # Create serial communication to Pico
-        self.pico_msngr = serial.Serial("/dev/ttyACM0", 115200, timeout=1)
+        self.pico_msngr = serial.Serial("/dev/ttyACM0", 115200, timeout=0.01)
         self.listen_pico_msg_timer = self.create_timer(0.015, self.listen_pico_msg)
         # Create target velocity subscriber
         self.targ_vel_subr = self.create_subscription(
@@ -51,9 +51,13 @@ class HomerInterface(Node):
                 self.pico_msngr.readline().decode("utf-8", "ignore").strip().split(",")
             )  # actual linear and angular vel
             if len(vels) == 2:
-                self.lin_vel = float(vels[0])
-                self.ang_vel = float(vels[1])
-        self.get_logger().debug(
+                try:
+                    self.lin_vel = float(vels[0])
+                    self.ang_vel = float(vels[1])
+                except ValueError:
+                    self.lin_vel = 0.0
+                    self.ang_vel = 0.0
+        self.get_logger().info(
             f"Measured velocity\nlinear: {self.lin_vel}, angular: {self.ang_vel}"
         )
 
