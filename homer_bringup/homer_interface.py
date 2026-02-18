@@ -9,6 +9,7 @@ from nav_msgs.msg import Odometry
 
 import serial
 from math import sin, cos, pi
+from struct import pack
 
 
 class HomerInterface(Node):
@@ -16,10 +17,10 @@ class HomerInterface(Node):
         super().__init__("homer_interface")
         # Create serial communication to Pico
         self.pico_msngr = serial.Serial(
-            "/dev/ttyACM0",
+            "/dev/ttyAMA0",
             115200,
             timeout=0.01,
-        )  # for UART, use ttyAMA0
+        )
         self.listen_pico_msg_timer = self.create_timer(0.015, self.listen_pico_msg)
         # Create target velocity subscriber
         self.targ_vel_subr = self.create_subscription(
@@ -62,13 +63,15 @@ class HomerInterface(Node):
                     self.lin_vel = 0.0
                     self.ang_vel = 0.0
         self.get_logger().info(
-            f"Measured velocity\nlinear: {self.lin_vel}, angular: {self.ang_vel}"
+            f"Measured velocity\nlinear: {self.lin_vel:.3f}, angular: {self.ang_vel:.3f}"
         )
 
     def set_targ_vel(self, msg):
         targ_lin = msg.linear.x
         targ_ang = msg.angular.z
-        self.pico_msngr.write(f"{targ_lin:.4f},{targ_ang:.4f}\n".encode("utf-8"))
+        # self.pico_msngr.write(f"{targ_lin:.4f},{targ_ang:.4f}\n".encode("utf-8"))
+        out_packet = pack("<Bff", 0xAA, targ_lin, targ_ang)  # 1+4+4=9 bytes total
+        self.pico_msngr.write(out_packet)
         self.get_logger().debug(
             f"Set HomeR's target velocity\nlinear: {targ_lin}, angular: {targ_ang}"
         )
