@@ -1,8 +1,10 @@
 import rclpy
 from rclpy.node import Node
+from tf_transformations import quaternion_about_axis
 from geometry_msgs.msg import Twist
+from nav_msgs.msg import Odometry
+from math import sin, cos, pi
 import serial
-
 
 class PicoInterface(Node):
     def __init__(self):
@@ -13,20 +15,23 @@ class PicoInterface(Node):
             115200,
             timeout=0.01,
         )  # for UART, use ttyAMA0
-        self.pico_comm_timer = self.create_timer(0.0167, self.process_pico_message)  # 60 Hz
+        self.pico_comm_timer = self.create_timer(0.0133, self.process_pico_message)  # 75 Hz
         # Create target velocity subscriber
-        self.targ_vel_subr = self.create_subscription(
+        self.cmd_vel_listner = self.create_subscription(
             topic="cmd_vel",
             msg_type=Twist,
-            callback=self.set_targ_vel,
+            callback=self.set_targ_vels,
             qos_profile=1,
         )
         # variables
-        self.meas_lin_vel = 0.0
-        self.meas_ang_vel = 0.0
-        self.meas_acc_x = 0.0
-        self.meas_acc_y = 0.0
-        self.meas_acc_z = 0.0
+        self.encoder_lin_vel = 0.0
+        self.encoder_ang_vel = 0.0
+        self.accel_x = 0.0
+        self.accel_y = 0.0
+        self.accel_z = 0.0
+        self.gyro_x = 0.0
+        self.gyro_y = 0.0
+        self.gyro_z = 0.0
         self.targ_lin_vel = 0.0
         self.targ_ang_vel = 0.0
         # constants
@@ -50,7 +55,7 @@ class PicoInterface(Node):
             f"Measured velocity\nlinear: {self.meas_lin_vel}, angular: {self.meas_ang_vel}"
         )
 
-    def set_targ_vel(self, msg):
+    def set_targ_vels(self, msg):
         targ_lin_vel = msg.linear.x
         targ_ang_vel = msg.angular.z
         self.pico_msngr.write(f"{targ_lin_vel:.3f},{targ_ang_vel:.3f}\n".encode("utf-8"))
