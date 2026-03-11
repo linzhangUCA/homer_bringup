@@ -1,6 +1,5 @@
 from setuptools import find_packages, setup
-import os
-from glob import glob
+from pathlib import Path
 
 package_name = 'homer_bringup'
 
@@ -13,12 +12,12 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (
-            os.path.join("share", package_name, "configs"),
-            glob(os.path.join("configs", "*.yaml")),
+            str(Path("share") / package_name / "configs"),
+            [str(file) for file in Path("configs").glob("*.yaml")],
         ),
         (
-            os.path.join("share", package_name, "launch"),
-            glob(os.path.join("launch", "*.py")),
+            str(Path("share") / package_name / "launch"),
+            [str(file) for file in Path("launch").glob("*_launch.py")],
         ),
     ],
     install_requires=['setuptools'],
@@ -34,7 +33,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'homer_interface = homer_bringup.homer_interface:main'
+            'pico_interface = homer_bringup.pico_interface:main'
         ],
     },
 )

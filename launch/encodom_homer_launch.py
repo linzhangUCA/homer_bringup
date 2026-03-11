@@ -63,12 +63,11 @@ def generate_launch_description():
         ],
     )
 
-    # diff_drive_node = Node(package="solid_octo", executable="diff_drive_controller")
     homer_interface_node = Node(package="homer_bringup", executable="homer_interface")
 
     rplidar_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            str(homer_package_path / "launch/rplidar.launch.py")
+            str(homer_package_path / "launch/rplidar_launch.py")
         ),
     )
 

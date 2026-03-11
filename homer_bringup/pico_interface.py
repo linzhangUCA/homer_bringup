@@ -1,11 +1,12 @@
+from math import sin, cos, atan2
+import serial
+
 import rclpy
 from rclpy.node import Node
 from tf_transformations import quaternion_about_axis
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
 from nav_msgs.msg import Odometry
-from math import sin, cos, atan2, pi
-import serial
 
 class PicoInterface(Node):
     def __init__(self):
