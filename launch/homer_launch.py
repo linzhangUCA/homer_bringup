@@ -3,12 +3,15 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
+
 from math import pi
 
 
 def generate_launch_description():
     homer_package_path = get_package_share_path("homer_bringup")
-    joy_config_path = homer_package_path / "config/ps3.config.yaml"
+    joy_config_path = homer_package_path / "config/gamepad.yaml"
+    ekf_config_path = homer_package_path / "config/ekf.yaml"
 
     sim_time_arg = DeclareLaunchArgument(
         name="use_sim_time",
@@ -88,6 +91,17 @@ def generate_launch_description():
 
     pico_interface_node = Node(package="homer_bringup", executable="pico_interface")
 
+    robot_localization_node = Node(
+        package='robot_localization',
+        executable='ekf_node',
+        name='ekf_filter_node',
+        output='screen',
+        parameters=[
+            str(ekf_config_path),
+            {'use_sim_time': LaunchConfiguration('use_sim_time')},
+        ]
+    )
+
     rplidar_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             str(homer_package_path / "launch/rplidar_launch.py")
@@ -107,6 +121,7 @@ def generate_launch_description():
         [
             sim_time_arg,
             pico_interface_node,
+            robot_localization_node,
             rplidar_launch,
             launch_teleop_twist_joy,
             footprint_static_tf_node,
