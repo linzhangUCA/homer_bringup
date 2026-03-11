@@ -63,7 +63,6 @@ def generate_launch_description():
         ],
     )
 
-    # diff_drive_node = Node(package="solid_octo", executable="diff_drive_controller")
     homer_interface_node = Node(package="homer_bringup", executable="homer_interface")
 
     rplidar_launch = IncludeLaunchDescription(
@@ -76,10 +75,7 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             str(get_package_share_path("teleop_twist_joy") / "launch/teleop-launch.py")
         ),
-        launch_arguments={
-            # "joy_config": "ps3",
-            "config_filepath": str(joy_config_path),
-        }.items(),
+        launch_arguments={"config_filepath": str(joy_config_path)}.items(),
     )
 
     return LaunchDescription(
