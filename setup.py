@@ -19,6 +19,10 @@ setup(
             str(Path("share") / package_name / "launch"),
             [str(file) for file in Path("launch").glob("*_launch.py")],
         ),
+        (
+            str(Path("share") / package_name / "rviz"),
+            [str(file) for file in Path("rviz").glob("*.rviz")],
+        ),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -35,6 +39,7 @@ setup(
         'console_scripts': [
             'pico_interface = homer_bringup.pico_interface:main',
             'basic_pico_interface = homer_bringup.basic_pico_interface:main',
+            'aruco_detector = homer_bringup.aruco_detector:main',
         ],
     },
 )
