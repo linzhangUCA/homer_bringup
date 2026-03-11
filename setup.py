@@ -12,8 +12,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (
-            str(Path("share") / package_name / "configs"),
-            [str(file) for file in Path("configs").glob("*.yaml")],
+            str(Path("share") / package_name / "config"),
+            [str(file) for file in Path("config").glob("*.yaml")],
         ),
         (
             str(Path("share") / package_name / "launch"),

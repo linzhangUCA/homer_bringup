@@ -8,7 +8,7 @@ from math import pi
 
 def generate_launch_description():
     homer_package_path = get_package_share_path("homer_bringup")
-    joy_config_path = homer_package_path / "configs/ps3.config.yaml"
+    joy_config_path = homer_package_path / "config/ps3.config.yaml"
 
     sim_time_arg = DeclareLaunchArgument(
         name="use_sim_time",
@@ -99,7 +99,6 @@ def generate_launch_description():
             str(get_package_share_path("teleop_twist_joy") / "launch/teleop-launch.py")
         ),
         launch_arguments={
-            # "joy_config": "ps3",
             "config_filepath": str(joy_config_path),
         }.items(),
     )
