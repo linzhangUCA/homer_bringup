@@ -110,7 +110,7 @@ class PicoInterface(Node):
         # Publish imu topic
         imu_msg = Imu()
         imu_msg.header.stamp = self.curr_ts.to_msg()
-        imu_msg.header.frame_id = "imu"
+        imu_msg.header.frame_id = "imu_link"
         imu_msg.linear_acceleration.x = self.motion_data["accel_x"]
         imu_msg.linear_acceleration.y = self.motion_data["accel_y"]
         imu_msg.linear_acceleration.z = self.motion_data["accel_z"]
